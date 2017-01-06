@@ -1,0 +1,70 @@
+---
+title: "Data Products - Assignment 1"
+author: "S. Hughes"
+date: "1/6/2017"
+output: html_document
+---
+
+###January 6th, 2017
+
+<br>
+Monthly Pedestrian Traffic - Melbourne November 2016
+
+```{r setup, include=FALSE}
+library("leaflet")
+```
+
+```{r ,echo = FALSE, cache = TRUE}
+
+url <- "http://www.pedestrian.melbourne.vic.gov.au/datadownload/November_2016.csv"
+pedData <- read.csv(url)
+
+```
+
+```{r Popups, echo = FALSE}
+
+traffic <- sapply(pedData[,3:32], sum, USE.NAMES = FALSE)
+traffic <- prettyNum(traffic,big.mark=",",scientific=FALSE)
+
+names <- sapply(names(pedData), strsplit, "[.]", USE.NAMES = FALSE)
+names <- sapply(names, paste, collapse = " ")
+
+loc <- names[3:32]
+
+traffic <- paste("<u>",loc, "</u>", "<br>", traffic)
+
+```
+
+```{r LatLong, echo = FALSE}
+melbLatLong<- data.frame(
+    lat = c(-37.809809,-37.814694, -37.813813, -37.812161,
+            -37.81055, -37.815168, -37.812913, -37.813778,
+            -37.816111, -37.818285, -37.818627, -37.814162,
+            -37.815175, -37.823959, -37.819285,
+            -37.819034,-37.820086, -37.818641, -37.807411,
+            -37.818038, -37.818978, -37.819207, -37.812743,
+            -37.825013, -37.812520, -37.811884, -37.805718,
+            -37.820792, -37.814190, -37.806148),
+    long = c(144.965190,144.972825, 144.972289, 144.956369,
+             144.962855, 144.966389, 144.964001, 144.964462,
+             144.965262, 144.952776, 144.946769, 144.940389,
+             144.939070, 144.947196, 144.968354, 144.965541,
+             144.962990, 144.973924, 144.955943, 144.965074,
+             144.954013, 144.954088, 144.968189, 144.953422,
+             144.965260, 144.967528, 144.956173, 144.968923,
+             144.956027, 144.966128)
+)
+
+```
+
+```{r, echo = FALSE}
+melbLatLong %>%
+    leaflet() %>%
+    addTiles() %>%
+    addMarkers(popup = traffic)
+```
+
+####<u> Data sources </u>
+http://www.pedestrian.melbourne.vic.gov.au/datadownload.html
+
+http://www.pedestrian.melbourne.vic.gov.au/datadownload/November_2016.csv
